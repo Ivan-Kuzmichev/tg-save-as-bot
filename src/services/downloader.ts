@@ -81,15 +81,29 @@ export class Downloader {
     return new Promise((resolve) => {
       const outputPath = path.join(tempDir, '%(title)s.%(ext)s');
 
+      // Check if it's Instagram URL
+      const isInstagram = url.includes('instagram.com');
+
       const args = [
         '--no-playlist',
         '--no-progress',
-        '-f',
-        'bestvideo+bestaudio/best',
-        '--merge-output-format',
-        'mp4',
-        '--remux-video',
-        'mp4',
+        ...(isInstagram ? [
+          // Instagram-specific: download combined video+audio format
+          '-f',
+          'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+          '--merge-output-format',
+          'mp4',
+          // Force H.264 video and AAC audio for iOS compatibility
+          '--postprocessor-args',
+          'ffmpeg:-c:v libx264 -c:a aac -pix_fmt yuv420p -movflags +faststart',
+        ] : [
+          '-f',
+          'bestvideo+bestaudio/best',
+          '--merge-output-format',
+          'mp4',
+          '--remux-video',
+          'mp4',
+        ]),
         '-o',
         outputPath,
         url,
@@ -216,15 +230,29 @@ export class Downloader {
     return new Promise((resolve) => {
       const outputPath = path.join(tempDir, '%(title)s.%(ext)s');
 
+      // Check if it's Instagram URL
+      const isInstagram = url.includes('instagram.com');
+
       const args = [
         '--no-playlist',
         '--no-progress',
-        '-f',
-        'bestvideo[height<=480]+bestaudio/best[height<=480]/best',
-        '--merge-output-format',
-        'mp4',
-        '--remux-video',
-        'mp4',
+        ...(isInstagram ? [
+          // Instagram-specific: download combined video+audio format
+          '-f',
+          'bestvideo[height<=480][ext=mp4]+bestaudio[ext=m4a]/best[height<=480][ext=mp4]/best',
+          '--merge-output-format',
+          'mp4',
+          // Force H.264 video and AAC audio for iOS compatibility
+          '--postprocessor-args',
+          'ffmpeg:-c:v libx264 -c:a aac -pix_fmt yuv420p -movflags +faststart',
+        ] : [
+          '-f',
+          'bestvideo[height<=480]+bestaudio/best[height<=480]/best',
+          '--merge-output-format',
+          'mp4',
+          '--remux-video',
+          'mp4',
+        ]),
         '-o',
         outputPath,
         url,
