@@ -2,13 +2,18 @@ version: "3.9"
 
 services:
   bot:
-    image: ghcr.io/<github-username>/tg-media-bot:latest
-    container_name: tg-media-bot
+    image: ghcr.io/ivan-kuzmichev/tg-save-as-bot:latest
+    container_name: tg-save-as-bot
     environment:
       - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
       - ALLOWED_USER_IDS=${ALLOWED_USER_IDS}
       - DOWNLOAD_TIMEOUT=${DOWNLOAD_TIMEOUT:-120}
       - MAX_FILE_SIZE_MB=${MAX_FILE_SIZE_MB:-49}
       - LOG_LEVEL=${LOG_LEVEL:-info}
-    network_mode: host
+      - YTDL_OPTIONS=--no-check-certificate
     restart: unless-stopped
+    volumes:
+      - temp-data:/app/temp
+
+volumes:
+  temp-data:
