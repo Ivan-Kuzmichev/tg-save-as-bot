@@ -174,7 +174,6 @@ export class Bot {
         {
           caption,
           parse_mode: 'HTML',
-          supports_streaming: true,
         }
       );
     } catch (error) {
